@@ -8,8 +8,19 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/png" href="https://drive.google.com/uc?export=view&id=1Bh0sQ7LYGPl_IwsisMQtHz3H45vYcefx">
-    <style>canvas { touch-action: none; }</style>
+    <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1Bh0sQ7LYGPl_IwsisMQtHz3H45vYcefx">
+    <style>
+        .sig-canvas {
+            touch-action: none;
+            -webkit-user-select: none;
+            user-select: none;
+            width: 100%;
+            height: 140px;
+            background-color: #ffffff;
+            cursor: crosshair;
+            display: block;
+        }
+    </style>
 </head>
 <body class="bg-slate-100 min-h-screen py-8 px-4 sm:px-6 lg:px-8">
 
@@ -18,20 +29,20 @@
         <!-- Header with Logo and Install App Button -->
         <div class="bg-slate-900 px-6 py-6 text-center border-b-4 border-red-600 relative">
             
-            <!-- Install App Prompt Button (Hidden until PWA install prompt is ready) -->
-            <div id="installBanner" class="hidden mb-4 bg-red-600/20 border border-red-500 rounded-xl p-2.5 flex items-center justify-between">
+            <!-- Install App Prompt Button -->
+            <div id="installBanner" class="mb-4 bg-red-600/20 border border-red-500 rounded-xl p-2.5 flex items-center justify-between">
                 <span class="text-xs text-white font-medium flex items-center gap-2">
-                    <i class="fas fa-mobile-screen-button text-red-400"></i> Install App on Home Screen
+                    <i class="fas fa-mobile-screen-button text-red-400"></i> Install App on Device
                 </span>
                 <button id="installBtn" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow transition">
-                    Install
+                    Install App
                 </button>
             </div>
 
             <div class="flex flex-col items-center justify-center space-y-2">
                 <!-- Company Logo -->
                 <div class="bg-white px-4 py-2 rounded-xl shadow-md inline-flex items-center justify-center">
-                    <img src="https://drive.google.com/uc?export=view&id=1Bh0sQ7LYGPl_IwsisMQtHz3H45vYcefx" alt="Vcode Logo" class="h-14 sm:h-16 object-contain">
+                    <img src="https://lh3.googleusercontent.com/d/1Bh0sQ7LYGPl_IwsisMQtHz3H45vYcefx" alt="Vcode Logo" class="h-14 sm:h-16 object-contain">
                 </div>
                 <div>
                     <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-wide">SERVICE VISIT REPORT</h1>
@@ -141,21 +152,25 @@
                 </div>
             </div>
 
-            <!-- Consumables Stock Requirement Section (Optional with Quantities) -->
+            <!-- Consumables Stock Requirement Section -->
             <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
                 <div class="flex items-center justify-between">
                     <label class="text-xs font-bold text-slate-700 uppercase">Consumables Stock Requirement (Optional)</label>
                     <input type="checkbox" id="consumablesToggle" onchange="toggleConsumablesBox()" class="w-4 h-4 text-red-600 rounded focus:ring-red-500">
                 </div>
                 
-                <div id="consumablesFields" class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 hidden">
+                <div id="consumablesFields" class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 hidden">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Ink Quantity (Nos)</label>
+                        <input type="number" id="inkQty" value="0" min="0" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white">
+                    </div>
                     <div>
                         <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Makeup Quantity (Nos)</label>
-                        <input type="number" id="makeupQty" value="3" min="0" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white">
+                        <input type="number" id="makeupQty" value="0" min="0" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white">
                     </div>
                     <div>
                         <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">Wash Quantity (Nos)</label>
-                        <input type="number" id="washQty" value="3" min="0" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white">
+                        <input type="number" id="washQty" value="0" min="0" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white">
                     </div>
                 </div>
             </div>
@@ -168,8 +183,8 @@
                         <span class="text-[11px] text-slate-500">Sign below</span>
                         <button type="button" onclick="clearPad('engineer')" class="text-xs text-red-600 underline">Clear</button>
                     </div>
-                    <div class="border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 overflow-hidden">
-                        <canvas id="engineerCanvas" width="300" height="120" class="w-full cursor-crosshair bg-white"></canvas>
+                    <div class="border-2 border-dashed border-slate-300 rounded-xl overflow-hidden bg-white">
+                        <canvas id="engineerCanvas" class="sig-canvas"></canvas>
                     </div>
                 </div>
 
@@ -180,8 +195,8 @@
                         <span class="text-[11px] text-slate-500">Sign below</span>
                         <button type="button" onclick="clearPad('customer')" class="text-xs text-red-600 underline">Clear</button>
                     </div>
-                    <div class="border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 overflow-hidden">
-                        <canvas id="customerCanvas" width="300" height="120" class="w-full cursor-crosshair bg-white"></canvas>
+                    <div class="border-2 border-dashed border-slate-300 rounded-xl overflow-hidden bg-white">
+                        <canvas id="customerCanvas" class="sig-canvas"></canvas>
                     </div>
                 </div>
             </div>
@@ -212,7 +227,7 @@
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            document.getElementById('installBanner').classList.remove('hidden');
+            document.getElementById('installBanner').style.display = 'flex';
         });
 
         document.getElementById('installBtn').addEventListener('click', async () => {
@@ -220,9 +235,11 @@
                 deferredPrompt.prompt();
                 let { outcome } = await deferredPrompt.userChoice;
                 if (outcome === 'accepted') {
-                    document.getElementById('installBanner').classList.add('hidden');
+                    document.getElementById('installBanner').style.display = 'none';
                 }
                 deferredPrompt = null;
+            } else {
+                alert("To install this app on your phone, open your browser menu (3 dots in Chrome or Share in Safari) and select 'Add to Home Screen'.");
             }
         });
 
@@ -241,8 +258,8 @@
             document.getElementById('headerSubtitle').innerText = CONFIG.companyName;
             document.getElementById('whatsappBtnText').innerText = `Save & Send to WhatsApp (${CONFIG.whatsappNumber.slice(2)})`;
 
-            initSignaturePad('engineerCanvas');
-            initSignaturePad('customerCanvas');
+            initCanvas('engineerCanvas');
+            initCanvas('customerCanvas');
 
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW registration failed'));
@@ -259,60 +276,80 @@
             }
         }
 
-        const padStates = {
-            engineerCanvas: { isDrawing: false, signed: false, ctx: null },
-            customerCanvas: { isDrawing: false, signed: false, ctx: null }
-        };
-
-        function initSignaturePad(canvasId) {
+        // Flawless Cross-Platform Signature Pad (PC Mouse + Mobile Touch)
+        function initCanvas(canvasId) {
             const canvas = document.getElementById(canvasId);
             const ctx = canvas.getContext('2d');
+            
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            let isDrawing = false;
+
             ctx.strokeStyle = '#0f172a';
             ctx.lineWidth = 2.5;
             ctx.lineCap = 'round';
-            padStates[canvasId].ctx = ctx;
+            ctx.lineJoin = 'round';
 
-            canvas.addEventListener('mousedown', (e) => startDraw(e, canvasId));
-            canvas.addEventListener('mousemove', (e) => draw(e, canvasId));
-            canvas.addEventListener('mouseup', () => stopDraw(canvasId));
-            canvas.addEventListener('mouseleave', () => stopDraw(canvasId));
-            canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDraw(e.touches[0], canvasId); });
-            canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e.touches[0], canvasId); });
-            canvas.addEventListener('touchend', (e) => { e.preventDefault(); stopDraw(canvasId); });
+            function getPos(e) {
+                const rect = canvas.getBoundingClientRect();
+                const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+                const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+                return {
+                    x: (clientX - rect.left) * (canvas.width / rect.width),
+                    y: (clientY - rect.top) * (canvas.height / rect.height)
+                };
+            }
+
+            function startDraw(e) {
+                isDrawing = true;
+                const pos = getPos(e);
+                ctx.beginPath();
+                ctx.moveTo(pos.x, pos.y);
+            }
+
+            function draw(e) {
+                if (!isDrawing) return;
+                const pos = getPos(e);
+                ctx.lineTo(pos.x, pos.y);
+                ctx.stroke();
+            }
+
+            function stopDraw() {
+                if (!isDrawing) return;
+                isDrawing = false;
+                ctx.beginPath();
+            }
+
+            // Mouse Events for PC
+            canvas.addEventListener('mousedown', (e) => {
+                startDraw(e);
+            });
+            canvas.addEventListener('mousemove', (e) => {
+                draw(e);
+            });
+            window.addEventListener('mouseup', () => {
+                stopDraw();
+            });
+
+            // Touch Events for Mobile
+            canvas.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                startDraw(e.touches[0]);
+            }, { passive: false });
+            canvas.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                draw(e.touches[0]);
+            }, { passive: false });
+            canvas.addEventListener('touchend', (e) => {
+                stopDraw();
+            });
         }
 
-        function getPos(e, canvas) {
-            const rect = canvas.getBoundingClientRect();
-            return {
-                x: (e.clientX - rect.left) * (canvas.width / rect.width),
-                y: (e.clientY - rect.top) * (canvas.height / rect.height)
-            };
-        }
-
-        function startDraw(e, canvasId) {
-            padStates[canvasId].isDrawing = true;
-            padStates[canvasId].signed = true;
-            const canvas = document.getElementById(canvasId);
-            const pos = getPos(e, canvas);
-            padStates[canvasId].ctx.beginPath();
-            padStates[canvasId].ctx.moveTo(pos.x, pos.y);
-        }
-
-        function draw(e, canvasId) {
-            if (!padStates[canvasId].isDrawing) return;
-            const canvas = document.getElementById(canvasId);
-            const pos = getPos(e, canvas);
-            padStates[canvasId].ctx.lineTo(pos.x, pos.y);
-            padStates[canvasId].ctx.stroke();
-        }
-
-        function stopDraw(canvasId) { padStates[canvasId].isDrawing = false; }
-
-        function clearPad(type) {
-            const canvasId = type === 'engineer' ? 'engineerCanvas' : 'customerCanvas';
-            const canvas = document.getElementById(canvasId);
-            padStates[canvasId].ctx.clearRect(0, 0, canvas.width, canvas.height);
-            padStates[canvasId].signed = false;
+        function clearPad(canvasIdPrefix) {
+            const canvas = document.getElementById(canvasIdPrefix + 'Canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
 
         async function submitAndSendWhatsApp() {
@@ -325,9 +362,10 @@
             let consumablesText = 'None';
             const consumablesEnabled = document.getElementById('consumablesToggle').checked;
             if (consumablesEnabled) {
+                const ink = document.getElementById('inkQty').value || 0;
                 const makeup = document.getElementById('makeupQty').value || 0;
                 const wash = document.getElementById('washQty').value || 0;
-                consumablesText = `Makeup: ${makeup} Nos, Wash: ${wash} Nos`;
+                consumablesText = `Ink: ${ink} Nos, Makeup: ${makeup} Nos, Wash: ${wash} Nos`;
             }
 
             const payload = {
