@@ -15,9 +15,21 @@
 
     <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
         
-        <!-- Header with Google Drive Logo Integration -->
+        <!-- Header with Logo and Install App Button -->
         <div class="bg-slate-900 px-6 py-6 text-center border-b-4 border-red-600 relative">
+            
+            <!-- Install App Prompt Button (Hidden until PWA install prompt is ready) -->
+            <div id="installBanner" class="hidden mb-4 bg-red-600/20 border border-red-500 rounded-xl p-2.5 flex items-center justify-between">
+                <span class="text-xs text-white font-medium flex items-center gap-2">
+                    <i class="fas fa-mobile-screen-button text-red-400"></i> Install App on Home Screen
+                </span>
+                <button id="installBtn" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow transition">
+                    Install
+                </button>
+            </div>
+
             <div class="flex flex-col items-center justify-center space-y-2">
+                <!-- Company Logo -->
                 <div class="bg-white px-4 py-2 rounded-xl shadow-md inline-flex items-center justify-center">
                     <img src="https://drive.google.com/uc?export=view&id=1Bh0sQ7LYGPl_IwsisMQtHz3H45vYcefx" alt="Vcode Logo" class="h-14 sm:h-16 object-contain">
                 </div>
@@ -194,6 +206,25 @@
             companyName: "Vcode Inkjet Solutions Pvt Ltd",
             whatsappNumber: "918985361991"
         };
+
+        // PWA Install Prompt Handler
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installBanner').classList.remove('hidden');
+        });
+
+        document.getElementById('installBtn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                let { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    document.getElementById('installBanner').classList.add('hidden');
+                }
+                deferredPrompt = null;
+            }
+        });
 
         window.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('visitDate').value = new Date().toISOString().split('T')[0];
