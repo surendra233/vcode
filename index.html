@@ -34,7 +34,7 @@
                 <span class="text-xs text-white font-medium flex items-center gap-2">
                     <i class="fas fa-mobile-screen-button text-red-400"></i> Install App on Device
                 </span>
-                <button id="installBtn" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow transition">
+                <button type="button" id="installBtn" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow transition cursor-pointer">
                     Install App
                 </button>
             </div>
@@ -222,7 +222,7 @@
             whatsappNumber: "918985361991"
         };
 
-        // PWA Install Prompt Handler
+        // Foolproof PWA Install Handler
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
@@ -239,7 +239,7 @@
                 }
                 deferredPrompt = null;
             } else {
-                alert("To install this app on your phone, open your browser menu (3 dots in Chrome or Share in Safari) and select 'Add to Home Screen'.");
+                alert("To install this app on your device:\n\n• Android (Chrome): Tap the 3-dots menu -> 'Install app' or 'Add to Home screen'\n• iPhone (Safari): Tap the Share button -> 'Add to Home Screen'\n• PC (Chrome/Edge): Click the install icon in your browser address bar.");
             }
         });
 
@@ -276,73 +276,80 @@
             }
         }
 
-        // Flawless Cross-Platform Signature Pad (PC Mouse + Mobile Touch)
+        // Native, Perfect Signature Pad Engine for PC Mouse and Mobile Touch
         function initCanvas(canvasId) {
             const canvas = document.getElementById(canvasId);
             const ctx = canvas.getContext('2d');
             
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
+            // Explicitly set internal pixel dimensions
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = 140;
 
             let isDrawing = false;
+            let lastX = 0;
+            let lastY = 0;
 
             ctx.strokeStyle = '#0f172a';
             ctx.lineWidth = 2.5;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
 
-            function getPos(e) {
+            function getCoordinates(e) {
                 const rect = canvas.getBoundingClientRect();
-                const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
-                const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+                const clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+                const clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
                 return {
                     x: (clientX - rect.left) * (canvas.width / rect.width),
                     y: (clientY - rect.top) * (canvas.height / rect.height)
                 };
             }
 
-            function startDraw(e) {
+            // Mouse Events (PC)
+            canvas.addEventListener('mousedown', (e) => {
                 isDrawing = true;
-                const pos = getPos(e);
-                ctx.beginPath();
-                ctx.moveTo(pos.x, pos.y);
-            }
+                const pos = getCoordinates(e);
+                lastX = pos.x;
+                lastY = pos.y;
+            });
 
-            function draw(e) {
+            canvas.addEventListener('mousemove', (e) => {
                 if (!isDrawing) return;
-                const pos = getPos(e);
+                const pos = getCoordinates(e);
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
                 ctx.lineTo(pos.x, pos.y);
                 ctx.stroke();
-            }
-
-            function stopDraw() {
-                if (!isDrawing) return;
-                isDrawing = false;
-                ctx.beginPath();
-            }
-
-            // Mouse Events for PC
-            canvas.addEventListener('mousedown', (e) => {
-                startDraw(e);
+                lastX = pos.x;
+                lastY = pos.y;
             });
-            canvas.addEventListener('mousemove', (e) => {
-                draw(e);
-            });
+
             window.addEventListener('mouseup', () => {
-                stopDraw();
+                isDrawing = false;
             });
 
-            // Touch Events for Mobile
+            // Touch Events (Mobile)
             canvas.addEventListener('touchstart', (e) => {
                 e.preventDefault();
-                startDraw(e.touches[0]);
+                isDrawing = true;
+                const pos = getCoordinates(e.touches[0]);
+                lastX = pos.x;
+                lastY = pos.y;
             }, { passive: false });
+
             canvas.addEventListener('touchmove', (e) => {
+                if (!isDrawing) return;
                 e.preventDefault();
-                draw(e.touches[0]);
+                const pos = getCoordinates(e.touches[0]);
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(pos.x, pos.y);
+                ctx.stroke();
+                lastX = pos.x;
+                lastY = pos.y;
             }, { passive: false });
-            canvas.addEventListener('touchend', (e) => {
-                stopDraw();
+
+            canvas.addEventListener('touchend', () => {
+                isDrawing = false;
             });
         }
 
